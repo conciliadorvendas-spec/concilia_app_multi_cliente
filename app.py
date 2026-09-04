@@ -27,6 +27,61 @@ def fmt_brl(value):
     return f"R$ {s}"
 
 
+def inject_custom_styles():
+    """CSS por botão, usando a key de cada st.container() como seletor."""
+    st.markdown(
+        f"""
+        <style>
+        /* Conciliar vendas — verde (tom do "+") */
+        .st-key-btn-conciliar button {{
+            background-color: {GREEN} !important;
+            border-color: {GREEN} !important;
+            color: #FFFFFF !important;
+        }}
+        .st-key-btn-conciliar button:hover {{
+            background-color: #27AE60 !important;
+            border-color: #27AE60 !important;
+        }}
+        .st-key-btn-conciliar button:disabled {{
+            background-color: {GREEN} !important;
+            opacity: 0.4 !important;
+        }}
+
+        /* Ver indicadores de conciliação — verde (tom do "+") */
+        .st-key-exp-indicadores summary {{
+            color: {GREEN} !important;
+        }}
+        .st-key-exp-indicadores summary svg {{
+            fill: {GREEN} !important;
+        }}
+
+        /* Baixar Relatório — azul sólido (tom do "Concilia") */
+        .st-key-btn-baixar button {{
+            background-color: {NAVY} !important;
+            border-color: {NAVY} !important;
+            color: #FFFFFF !important;
+        }}
+        .st-key-btn-baixar button:hover {{
+            background-color: #14293F !important;
+            border-color: #14293F !important;
+        }}
+
+        /* Nova conciliação — azul sólido (tom do "Concilia") */
+        .st-key-btn-nova button {{
+            background-color: {NAVY} !important;
+            border-color: {NAVY} !important;
+            color: #FFFFFF !important;
+        }}
+        .st-key-btn-nova button:hover {{
+            background-color: #14293F !important;
+            border-color: #14293F !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def show_logo(subtitle=None):
     st.markdown(
         f"<h1 style='color:{NAVY}; margin-bottom:0;'>Concilia<span style='color:{GREEN};'>+</span></h1>",
@@ -101,12 +156,13 @@ def app_screen():
             st.error(f"O arquivo '{f.name}' passa de 10 MB. Envie um arquivo menor.")
             return
 
-    conciliar = st.button(
-        "Conciliar vendas",
-        type="primary",
-        use_container_width=True,
-        disabled=not (sistema_file and maquina_file),
-    )
+    with st.container(key="btn-conciliar"):
+        conciliar = st.button(
+            "Conciliar vendas",
+            type="primary",
+            use_container_width=True,
+            disabled=not (sistema_file and maquina_file),
+        )
 
     if conciliar:
         with st.spinner("Conciliando vendas..."):
@@ -129,28 +185,33 @@ def app_screen():
         m2.metric("Total em taxas", fmt_brl(summary["total_taxas"]))
         m3.metric("Estornos / cancelamentos", fmt_brl(summary["total_estornos"]))
 
-        with st.expander("Ver indicadores de conciliação"):
-            st.write(f"- Parcelas no Sistema: **{summary['n_sistema']}**")
-            st.write(f"- Pagamentos na Máquina: **{summary['n_maquina']}**")
-            st.write(f"- Conciliadas com sucesso: **{summary['n_conciliadas']}**")
-            st.write(f"- Pagamentos agrupados (lote) validados: **{summary['n_lotes']}**")
-            st.write(f"- Vendas sem correspondência na Máquina: **{summary['n_orfaos_sistema']}**")
-            st.write(f"- Pagamentos sem correspondência no Sistema: **{summary['n_orfaos_maquina']}**")
+        with st.container(key="exp-indicadores"):
+            with st.expander("Ver indicadores de conciliação"):
+                st.write(f"- Parcelas no Sistema: **{summary['n_sistema']}**")
+                st.write(f"- Pagamentos na Máquina: **{summary['n_maquina']}**")
+                st.write(f"- Conciliadas com sucesso: **{summary['n_conciliadas']}**")
+                st.write(f"- Pagamentos agrupados (lote) validados: **{summary['n_lotes']}**")
+                st.write(f"- Vendas sem correspondência na Máquina: **{summary['n_orfaos_sistema']}**")
+                st.write(f"- Pagamentos sem correspondência no Sistema: **{summary['n_orfaos_maquina']}**")
 
         nome_arquivo = config["display_name"].lower().replace(" ", "_")
-        st.download_button(
-            "Baixar Relatório",
-            data=workbook_bytes,
-            file_name=f"conciliacao_{nome_arquivo}_{datetime.now().strftime('%Y%m%d')}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True,
-        )
+        with st.container(key="btn-baixar"):
+            st.download_button(
+                "Baixar Relatório",
+                data=workbook_bytes,
+                file_name=f"conciliacao_{nome_arquivo}_{datetime.now().strftime('%Y%m%d')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True,
+            )
 
-        if st.button("Nova conciliação"):
-            st.session_state.pop("sistema_upl", None)
-            st.session_state.pop("maquina_upl", None)
-            st.rerun()
+        with st.container(key="btn-nova"):
+            if st.button("Nova conciliação"):
+                st.session_state.pop("sistema_upl", None)
+                st.session_state.pop("maquina_upl", None)
+                st.rerun()
 
+
+inject_custom_styles()
 
 if "client_config" not in st.session_state:
     login_screen()
