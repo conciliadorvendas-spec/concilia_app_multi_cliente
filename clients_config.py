@@ -71,6 +71,37 @@ CLIENTS = {
         "status_liquidado_maquina": ["CREDITO EFETUADO", "ANTECIPACAO - CREDITO EFETUADO"],
         "ativo": True,
     },
+      "biancaw01": {
+        "display_name": "Bianca",  # troque pelo nome do negócio dela, se for diferente
+        "sistema_sheet": "Relatório",
+        "sistema_header_row": None,
+        "sistema_cols": {
+            "id": "Transação",
+            "valor": "Valor",
+            "taxas": "Taxas",
+            "vl_final": "Vl Final",
+            "status": "Status",
+            "data": "Data",
+            "forma": "Forma",
+            "data_recebimento": "Recebimento",
+            "parcela": "Parcela",
+        },
+        "maquina_sheet": "Recebimentos",
+        "maquina_header_row": 2,
+        "maquina_cols": {
+            "id": "Nº Compromisso",
+            "data_pagamento": "Data de Pagamento",
+            "valor": "Valor do Pagamento",
+            "status": "Status",
+            "contrato": "Contrato",
+        },
+        "valor_moeda_br": True,
+        "data_dayfirst": True,
+        "matching_strategy": "valor_data",
+        "status_liquidado_sistema": ["LIQUIDADO"],
+        "status_liquidado_maquina": ["CREDITO EFETUADO", "ANTECIPACAO - CREDITO EFETUADO"],
+        "ativo": True,
+    },
 
     # Próximo lojista entra aqui como um novo bloco. Exemplo ilustrativo
     # (apagar/ajustar quando um cliente real desse perfil chegar):
