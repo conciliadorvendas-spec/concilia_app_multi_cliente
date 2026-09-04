@@ -78,11 +78,18 @@ def inject_custom_styles():
         }}
 
         /* Campos de usuário e senha (tela de login) — borda azul (tom do "Concilia") */
-        .st-key-login-fields [data-baseweb="base-input"] {{
+        .st-key-login-fields [data-baseweb="base-input"],
+        .st-key-login-fields [data-baseweb="input"] {{
             border-color: {NAVY} !important;
+            box-shadow: none !important;
         }}
-        .st-key-login-fields [data-baseweb="base-input"]:focus-within {{
+        .st-key-login-fields [data-baseweb="base-input"]:focus-within,
+        .st-key-login-fields [data-baseweb="input"]:focus-within {{
             border-color: {NAVY} !important;
+            box-shadow: 0 0 0 1px {NAVY} !important;
+        }}
+        .st-key-login-fields input:focus {{
+            outline-color: {NAVY} !important;
             box-shadow: 0 0 0 1px {NAVY} !important;
         }}
         </style>
