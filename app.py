@@ -76,6 +76,15 @@ def inject_custom_styles():
             background-color: #14293F !important;
             border-color: #14293F !important;
         }}
+
+        /* Campos de usuário e senha (tela de login) — borda azul (tom do "Concilia") */
+        .st-key-login-fields [data-baseweb="base-input"] {{
+            border-color: {NAVY} !important;
+        }}
+        .st-key-login-fields [data-baseweb="base-input"]:focus-within {{
+            border-color: {NAVY} !important;
+            box-shadow: 0 0 0 1px {NAVY} !important;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -111,10 +120,11 @@ def check_credentials(username, password):
 def login_screen():
     show_logo("Conciliação automática de vendas")
     st.write("")
-    with st.form("login"):
-        username = st.text_input("Usuário")
-        password = st.text_input("Senha", type="password")
-        submitted = st.form_submit_button("Entrar", use_container_width=True)
+    with st.container(key="login-fields"):
+        with st.form("login"):
+            username = st.text_input("Usuário")
+            password = st.text_input("Senha", type="password")
+            submitted = st.form_submit_button("Entrar", use_container_width=True)
 
     if submitted:
         config, error = check_credentials(username.strip(), password)
